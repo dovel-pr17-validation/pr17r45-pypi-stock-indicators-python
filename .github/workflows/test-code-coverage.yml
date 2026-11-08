@@ -1,0 +1,72 @@
+# For more information see:
+# https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Test code coverage
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["*"]
+  workflow_dispatch:
+
+# Limit concurrent runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: indicators
+    runs-on: ubuntu-latest
+    # Fork PRs get no repository secrets, so skip the job for them; the unit
+    # test workflow verifies forks.
+    if: |
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+
+    env:
+      CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          # Explicitly checkout PR code
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.x
+          dotnet-quality: ga
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: 3.13
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -U --upgrade-strategy=only-if-needed pip
+          pip install -r requirements.txt
+          pip install -r requirements-test.txt
+
+      - name: Test indicators
+        run: |
+          coverage run -m --source=stock_indicators pytest
+          coverage xml
+
+      # Dependabot PRs run with Dependabot secrets, not Actions secrets, so the
+      # token is empty there; skip only the upload and keep the coverage run.
+      - name: Publish coverage to Codacy
+        if: env.CODACY_PROJECT_TOKEN != ''
+        uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: coverage.xml

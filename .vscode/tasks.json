@@ -1,0 +1,206 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // Schema: https://code.visualstudio.com/docs/reference/tasks-appendix
+  "$schema": "vscode://schemas/tasks",
+  "version": "2.0.0",
+  // defaults
+  "group": "none",
+  "presentation": {
+    "clear": true,
+    "echo": true,
+    "panel": "dedicated",
+    "focus": true,
+    "reveal": "always",
+    "revealProblems": "onProblem",
+    "showReuseMessage": false
+  },
+  "problemMatcher": [],
+  "options": {
+    "cwd": "${workspaceFolder}"
+  },
+  // tasks
+  "tasks": [
+    {
+      "label": "Install: Ruby Packages (docs)",
+      "type": "shell",
+      "command": "bundle install --jobs 4 && bundle clean --force",
+      "options": {
+        "cwd": "${workspaceFolder}/docs",
+        "env": {
+          "BUNDLE_GEMFILE": "${workspaceFolder}/docs/Gemfile",
+          "BUNDLE_PATH": "${workspaceFolder}/docs/vendor/bundle"
+        }
+      }
+    },
+    {
+      "label": "Install: Python Packages",
+      "type": "shell",
+      "command": "python -m pip install -r requirements.txt && python -m pip install -r requirements-test.txt"
+    },
+    {
+      "label": "Update: Python Packages",
+      "type": "shell",
+      "command": "python -m pip install -U -r requirements.txt && python -m pip install -U -r requirements-test.txt"
+    },
+    {
+      "label": "Update: Ruby Packages (docs)",
+      "type": "shell",
+      "command": "bundle update --conservative && bundle clean --force",
+      "options": {
+        "cwd": "${workspaceFolder}/docs",
+        "env": {
+          "BUNDLE_GEMFILE": "${workspaceFolder}/docs/Gemfile",
+          "BUNDLE_PATH": "${workspaceFolder}/docs/vendor/bundle"
+        }
+      }
+    },
+    {
+      "label": "Update: All Packages",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Update: Python Packages",
+        "Update: Ruby Packages (docs)"
+      ]
+    },
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "python -m pip install -r requirements.txt && python -m pip install -r requirements-test.txt",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Lint: Code",
+      "type": "shell",
+      "command": "python -m ruff check . && python -m ruff format --check .",
+      "group": "test"
+    },
+    {
+      "label": "Lint: Code (fix)",
+      "type": "shell",
+      "command": "python -m ruff check --fix . && python -m ruff format ."
+    },
+    {
+      "label": "Lint: Markdown files",
+      "detail": "Run markdownlint over documentation",
+      "type": "shell",
+      "command": "echo y | npx markdownlint-cli2",
+      "group": "test",
+      "problemMatcher": "$markdownlint"
+    },
+    {
+      "label": "Lint: Markdown files (fix)",
+      "detail": "Auto-fix markdown formatting issues",
+      "type": "shell",
+      "command": "echo y | npx markdownlint-cli2 --fix",
+      "problemMatcher": "$markdownlint"
+    },
+    {
+      "label": "Test: All",
+      "dependsOrder": "parallel",
+      "dependsOn": [
+        "Test: Unit (default)",
+        "Test: Coverage",
+        "Test: Performance",
+        "Test: Localization"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Test: Unit (default)",
+      "type": "shell",
+      "command": "python -m pytest -vr A",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Test: Coverage",
+      "type": "shell",
+      "command": "python -m pytest --cov=stock_indicators --cov-report=term-missing"
+    },
+    {
+      "label": "Test: Performance",
+      "type": "shell",
+      "command": "python -m pytest -m performance"
+    },
+    {
+      "label": "Test: Performance (focus)",
+      "type": "shell",
+      "command": "python -m pytest -m \"performance and perf_focus\""
+    },
+    {
+      "label": "Test: Localization",
+      "type": "shell",
+      "command": "python -m pytest -m localization -vr A"
+    },
+    {
+      "label": "Run: Doc Site with LiveReload",
+      "type": "shell",
+      "command": "bundle exec jekyll serve --livereload --open-url",
+      "dependsOn": "Install: Ruby Packages (docs)",
+      "dependsOrder": "sequence",
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}/docs",
+        "env": {
+          "BUNDLE_GEMFILE": "${workspaceFolder}/docs/Gemfile",
+          "BUNDLE_PATH": "${workspaceFolder}/docs/vendor/bundle"
+        }
+      }
+    },
+    {
+      "label": "Benchmark: JSON (prompt filename)",
+      "type": "shell",
+      "command": "python -m pytest -m performance --benchmark-json=.benchmarks/${input:benchJsonOut}"
+    },
+    {
+      "label": "Benchmark: Focus JSON (prompt filename)",
+      "type": "shell",
+      "command": "python -m pytest -m \"performance and perf_focus\" --benchmark-json=.benchmarks/${input:benchJsonOut}"
+    },
+    {
+      "label": "Benchmark: Autosave to .benchmarks",
+      "type": "shell",
+      "command": "python -m pytest -m performance --benchmark-autosave --benchmark-save-data"
+    },
+    {
+      "label": "Benchmark: Focus Autosave to .benchmarks",
+      "type": "shell",
+      "command": "python -m pytest -m \"performance and perf_focus\" --benchmark-autosave --benchmark-save-data"
+    },
+    {
+      "label": "Benchmark: List Saved Runs",
+      "type": "shell",
+      "command": "pytest-benchmark list"
+    },
+    {
+      "label": "Benchmark: Compare Saved Runs",
+      "type": "shell",
+      "command": "pytest-benchmark compare ${input:benchBase} ${input:benchTarget}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "benchJsonOut",
+      "type": "promptString",
+      "description": "Output JSON filename (e.g., bench_current.json)",
+      "default": "bench_current.json"
+    },
+    {
+      "id": "benchBase",
+      "type": "promptString",
+      "description": "Base saved run name (from 'Benchmark: List Saved Runs')",
+      "default": ""
+    },
+    {
+      "id": "benchTarget",
+      "type": "promptString",
+      "description": "Target saved run name (from 'Benchmark: List Saved Runs')",
+      "default": ""
+    }
+  ]
+}

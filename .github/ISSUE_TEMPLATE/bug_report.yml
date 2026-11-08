@@ -1,0 +1,20 @@
+name: Bug report
+description: File a bug report.
+type: Bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you &#128150; for taking the time report a bug in the [`stock-indicators` PyPI library](https://pypi.org/project/stock-indicators)!
+        > Before reporting, please review known [issues](https://github.com/facioquo/stock-indicators-python/issues?q=is%3Aissue), community [discussions](https://github.com/facioquo/stock-indicators-dotnet/discussions), and [Help! Results don't match TradingView!](https://github.com/facioquo/stock-indicators-dotnet/discussions/801)
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect to happen?
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: If your request is urgent, please review our [sponsorship tiers](https://github.com/sponsors/facioquo). For contract custom development, contact [Skender Co.](https://skenderco.com)

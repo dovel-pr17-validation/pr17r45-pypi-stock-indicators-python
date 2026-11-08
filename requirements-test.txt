@@ -1,0 +1,8 @@
+# These packages are needed for testing.
+pytest
+pytest-cov
+pytest-benchmark
+backports.zoneinfo; python_version < '3.9'
+ruff
+pyright
+pip-audit

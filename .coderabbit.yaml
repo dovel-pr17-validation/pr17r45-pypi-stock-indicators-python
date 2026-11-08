@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+inheritance: true
+
+reviews:
+
+  review_status: false
+  commit_status: false
+
+  auto_review:
+    enabled: false
+    auto_incremental_review: false
+    drafts: false
+
+  auto_title_instructions: |
+    Use conventional commit with short (<65 chars) sentence case Subject.  See Copilot instructions.
+
+    Title strategy:
+    - Focus on the PRIMARY contribution or most central feature delivered in the PR
+    - Do NOT base the title on the last commit message
+    - Do NOT choose the most verbose or largest change
+    - Identify the core purpose or business value of the PR
+    - Keep titles concise and meaningful
+
+    Requirements:
+    - Use lowercase for type: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, or plan
+    - Subject must start with an uppercase letter
+    - Keep total title length ≤ 65 characters
+    - Use imperative mood (e.g., "Add feature" not "Added feature")
+
+    Examples:
+    - `feat: Add WebSocket support` (not "Update connection manager")
+    - `fix: Resolve authentication timeout` (not "Fix bug in auth service")
+    - `docs: Improve API examples` (not "Update documentation files")
+    - `chore: Update dependencies` (when that's the sole purpose)
+
+  path_instructions:
+    - path: "**/src/**"
+      instructions: "Ensure alignment to latest language and framework standards, and our organization's coding standards"
+    - path: "**/test/**"
+      instructions: "Focus on test coverage, edge cases, and alignment to test framework"
+    - path: "**/api/**"
+      instructions: "Ensure proper error handling and API documentation"
+    - path: "**/*.md"
+      instructions: "Check for broken links and formatting according to markdown configuration and instructions"
+
+  path_filters:
+    - "**"
+    - "!.github/workflows/*.lock.yml"
+    - "!node_modules/"
+    - "!*-lock.json"
+    - "!packages.lock.json"
+    - "!packages/"
+    - "!_cslib/"
+    - "!.jekyll-cache/"
+    - "!.pytest_cache/"
+    - "!__pycache__/"
+    - "!.venv/"
+    - "!.benchmarks/"
+    - "!.coverage/"
+    - "!vendor/"
+    - "!Gemfile.lock"
+    - "!.vitepress/cache/"
+    - "!.vitepress/dist/"
+    - "!bin/"
+    - "!obj/"
+    - "!*.g.cs"
+    - "!*.docx"
+    - "!*.pptx"
+    - "!*.xlsx"
+    - "!*.bak"
+    - "!*.zip"
+
+  tools:
+    ruff:
+      enabled: true
+
+knowledge_base:
+  code_guidelines:
+    filePatterns:
+      - "**/AGENTS.md"
+      - ".github/skills/**"

@@ -1,0 +1,116 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stock-indicators"
+authors = [{name = "Dave Skender"}]
+maintainers = [{name="Dong-Geon Lee"}]
+description = "Stock Indicators for Python.  Send in historical price quotes and get back desired technical indicators such as Stochastic RSI, Average True Range, Parabolic SAR, etc.  Nothing more."
+readme = "README.md"
+license = {text = "Apache 2.0"}
+classifiers = [
+    'Intended Audience :: Developers',
+    'Topic :: Office/Business :: Financial',
+    'Topic :: Office/Business :: Financial :: Investment',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'License :: OSI Approved :: Apache Software License',
+    'Operating System :: OS Independent',
+    'Operating System :: POSIX',
+    'Operating System :: Unix',
+    'Operating System :: MacOS',
+    'Typing :: Typed'
+]
+requires-python = ">=3.8"
+dependencies = [
+    "pythonnet>=3.0.5",
+    "typing_extensions>=4.4.0"
+]
+keywords = [
+"Stock Indicators", "Technical Indicators", "Market", "Technical Analysis", "Algorithmic", "Trading", "Trade",
+"Momentum", "Finance", "Algorithm", "Algo", "AlgoTrading", "Financial", "Strategy", "Chart", "Charting",
+"Oscillator", "Overlay", "Equity", "Bitcoin", "Crypto", "Cryptocurrency", "Forex", "Quantitative",
+"Historical", "Quotes", "Accumulation", "Distribution", "ADL", "Aroon", "True Range", "ATR",
+"Bollinger Bands", "Commodity", "CCI", "Chandelier Exit", "Chaikin Money Flow", "CMF", "MFI",
+"Kaufman Adaptive", "Moving Average", "Convergence", "Divergence", "MACD", "SMA", "EMA", "DEMA",
+"TEMA", "TRIX", "Smoothed", "Elder-ray", "Bull", "Bear", "Power", "Force", "Hurst Exponent",
+"Relative", "Strength", "Index", "RSI", "Connors RSI", "Stochastic", "Directional", "Movement", "ADX",
+"Donchian", "Keltner Channel", "Heikin-Ashi", "Hilbert Transform Instantaneous Trendline", "Hull",
+"HMA", "Ichimoku Cloud", "On-balance Volume", "OBV", "Price", "PMO", "PRS", "Parabolic SAR", "PSAR",
+"Pivot Points", "Rate of Change", "ROC", "Linear Regression", "R-Squared", "Renko", "Schaff Cycle",
+"Slope", "Standard Deviation", "Beta", "Convexity", "Correlation", "SuperTrend", "Ulcer", "Ultimate",
+"Vortex", "Williams %R", "Alligator", "Gator", "Fractal", "Chaos", "Choppiness", "Endpoint", "WMA", "ZigZag"]
+
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://python.stockindicators.dev"
+"Bug Tracker" = "https://github.com/facioquo/stock-indicators-python/issues"
+Documentation = "https://python.stockindicators.dev"
+"Source Code" = "https://github.com/facioquo/stock-indicators-python/tree/main"
+"Release Notes" = "https://github.com/facioquo/stock-indicators-python/releases"
+
+[tool.setuptools.packages.find]
+exclude = ["tests*", "benchmarks*", "test_data*", "docs*"]
+
+# can be empty if no extra settings are needed, presence enables setuptools_scm
+[tool.setuptools_scm]
+local_scheme = "no-local-version"
+
+[tool.ruff]
+target-version = "py38"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "F",  # pyflakes
+    "I",  # import sorting
+    "B",  # flake8-bugbear
+    "UP", # pyupgrade
+    "C4", # flake8-comprehensions
+    "TID",# flake8-tidy-imports
+    "PT", # flake8-pytest-style
+    "RUF" # Ruff-specific rules
+]
+ignore = [
+    "B905", # allow zip without strict length check on py38 support floor
+    "E501"  # allow longer docstrings/comments
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["stock_indicators"]
+
+[tool.ruff.lint.per-file-ignores]
+"stock_indicators/__init__.py" = ["F401", "F403"]
+"stock_indicators/_cslib/__init__.py" = ["F401"]
+"stock_indicators/_cstypes/__init__.py" = ["F401"]
+"stock_indicators/indicators/__init__.py" = ["F401"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pyright]
+include = ["stock_indicators", "tests"]
+pythonVersion = "3.8"
+typeCheckingMode = "standard"
+useLibraryCodeForTypes = true
+reportMissingImports = "none"
+reportMissingModuleSource = "none"
+reportMissingTypeStubs = "none"
+stubPath = "typings"
+exclude = ["typings"]
+reportInvalidTypeForm = "none"
+reportAttributeAccessIssue = "none"
+reportOperatorIssue = "none"
+reportReturnType = "none"
+reportGeneralTypeIssues = "none"
+reportArgumentType = "none"
+reportInconsistentOverload = "none"
+reportIndexIssue = "none"
+reportCallIssue = "none"
